@@ -22,16 +22,16 @@ FONT="JetBrainsMono Nerd Font 10"
 LIST="$(nmcli --fields "$FIELDS" device wifi)"
 WIFI_STATUS="$(nmcli radio wifi)"
 
-
 [[ "$WIFI_STATUS" =~ "enabled" ]] && TOGGLE="Turn wifi off"
 [[ "$WIFI_STATUS" =~ "disabled" ]] && TOGGLE="Turn wifi on"
 
-
 RESULT="$(echo -e "$TOGGLE\n$LIST" | rofi -dmenu -p "Wi-Fi SSID: " -matching regex -config "$SCRIPTPATH/wifi_config.rasi" -location "$POSITION" -yoffset "$Y_OFFSET" -xoffset "$X_OFFSET" -font "$FONT")"
 
+[[ "$RESULT" =~ "Turn wifi off" ]] && nmcli radio wifi off
+[[ "$RESULT" =~ "Turn wifi on" ]] && nmcli radio wifi on
 
-[[ "$RESULT" =~ "Turn wifi off" ]] && {nmcli radio wifi off; exit 0}
-[[ "$RESULT" =~ "Turn wifi on" ]] && {nmcli radio wifi on; exit 0}
+CON_SSID="$(echo "$RESULT" | cut -d ' ' -f 1)"
 
-
-[[ $(nmcli con up "$RESULT") ]] || nmcli dev wifi con "$RESULT" password "$PASSWD"
+[[ $(nmcli con up "$CON_SSID") ]] ||
+	PASSWD="$(rofi -dmenu -p "$CON_SSID passwd: " -matching regex -config "$SCRIPTPATH/wifi_config.rasi" -location "$POSITION" -yoffset "$Y_OFFSET" -xoffset "$X_OFFSET" -font "$FONT")" &&
+	nmcli dev wifi con "$CON_SSID" password "$PASSWD"
