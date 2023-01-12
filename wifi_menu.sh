@@ -33,5 +33,5 @@ RESULT="$(echo -e "$TOGGLE\n$LIST" | rofi -dmenu -p "Wi-Fi SSID: " -matching reg
 CON_SSID="$(echo "$RESULT" | cut -d ' ' -f 1)"
 
 [[ $(nmcli con up "$CON_SSID") ]] ||
-	PASSWD="$(rofi -dmenu -p "$CON_SSID passwd: " -matching regex -config "$SCRIPTPATH/wifi_config.rasi" -location "$POSITION" -yoffset "$Y_OFFSET" -xoffset "$X_OFFSET" -font "$FONT")" &&
+	PASSWD="$(rofi -dmenu -p "Passwd: " -matching regex -config "$SCRIPTPATH/wifi_config.rasi" -location "$POSITION" -yoffset "$Y_OFFSET" -xoffset "$X_OFFSET" -font "$FONT")" &&
 	nmcli dev wifi con "$CON_SSID" password "$PASSWD"
