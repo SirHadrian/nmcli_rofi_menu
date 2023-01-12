@@ -30,8 +30,8 @@ WIFI_STATUS="$(nmcli radio wifi)"
 RESULT="$(echo -e "$TOGGLE\n$LIST" | rofi -dmenu -p "Wi-Fi SSID: " -matching regex -config "$SCRIPTPATH/wifi_config.rasi" -location "$POSITION" -yoffset "$Y_OFFSET" -xoffset "$X_OFFSET" -font "$FONT")"
 
 
-[[ "$RESULT" =~ "Turn wifi off" ]] && nmcli radio wifi off
-[[ "$RESULT" =~ "Turn wifi on" ]] && nmcli radio wifi on
+[[ "$RESULT" =~ "Turn wifi off" ]] && {nmcli radio wifi off; exit 0}
+[[ "$RESULT" =~ "Turn wifi on" ]] && {nmcli radio wifi on; exit 0}
 
 
-echo $RESULT
+[[ $(nmcli con up "$RESULT") ]] || nmcli dev wifi con "$RESULT" password "$PASSWD"
